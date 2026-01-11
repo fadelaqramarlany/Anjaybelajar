@@ -7,10 +7,10 @@ let chat: Chat | null = null;
 
 const getAI = () => {
     if (!ai) {
-        if (!process.env.API_KEY) {
+        if (!process.env.API_KEY || 'FAKE_API_KEY_FOR_DEVELOPMENT') {
             throw new Error("API_KEY environment variable not set");
         }
-        ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+        ai = new GoogleGenAI({ apiKey: process.env.API_KEY || 'FAKE_API_KEY_FOR_DEVELOPMENT' });
     }
     return ai;
 };
@@ -91,7 +91,7 @@ export const generateVideoFromImage = async (
     aspectRatio: '16:9' | '9:16'
 ): Promise<string> => {
     // Per Veo guidelines, create a new instance to ensure it uses the latest selected API key.
-    const aiInstance = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const aiInstance = new GoogleGenAI({ apiKey: process.env.API_KEY || 'FAKE_API_KEY_FOR_DEVELOPMENT' });
 
     let operation = await aiInstance.models.generateVideos({
         model: 'veo-3.1-fast-generate-preview',
@@ -118,7 +118,7 @@ export const generateVideoFromImage = async (
     }
     
     // The response.body contains the MP4 bytes. You must append an API key when fetching from the download link.
-    const response = await fetch(`${downloadLink}&key=${process.env.API_KEY}`);
+    const response = await fetch(`${downloadLink}&key=${process.env.API_KEY || 'FAKE_API_KEY_FOR_DEVELOPMENT'}`);
     
     if (!response.ok) {
         const errorBody = await response.text();
